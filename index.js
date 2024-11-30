@@ -1,8 +1,6 @@
 const express = require('express');
 const app = express();
 const port = 3000;
-const { firstName, lastName, role} = req.body;
-const lastUserID = users[users.lenght - 1].id;
 const users = [
     { id: 1, firstName: "John", lastName: "Doe", role: "admin"},
     { id: 2, firstName: "Jane", lastName: "Smith", role: "user"},
@@ -20,9 +18,17 @@ app.use(express.json());
 
 // GET : LIRE tous les utilisateurs
 app.get("/", (req, res) => {
-    res.json({
-        msg: "Hello rest api",
-    })
+
+    const id = parseInt(req.params.id)
+
+	// trouve son index, verifier si le userIndex est positive
+	const userIndex = users.findIndex((user) => user.id === id)
+
+	// utilisateur non trouvé
+	if (userIndex < 0)
+		return res.status(404).json({ msg: "utilisateur non trouvé" })
+
+    res.json(users[userIndex])
 })
 
 app.listen(port, () => {
@@ -53,16 +59,46 @@ app.post("/", (req, res) => {
 })
 
 // PUT : MODIFIER un utilisateur basé sur les données envoyées dans le corps(body) et le paramètre passé dans l'uRL
-app.put("/", (req, res) => {
+app.put("/id", (req, res) => {
+
+    const { firstName, lastName } = req.body
+
+	if (firstName) users[userIndex].firstName = firstName
+	if (lastName) users[userIndex].lastName = lastName
+
+    const id = parseInt(req.params.id)
+    // trouve son index, verifier si le userIndex est positive
+	const userIndex = users.findIndex((user) => user.id === id)
+    	// utilisateur non trouvé
+	if (userIndex < 0)
+		return res.status(404).json({ msg: "utilisateur non trouvé" })
+
+    // si el est trouvé, nous vérifions quelles valeurs ont été envoyées
+	
+
 	res.json({
-		msg: "Hello rest api ici le PUT",
+		msg: "utilisateur mis à jour",
+		user: users[userIndex],
 	})
 })
 
 // DELETE : supprimer un utilisateur basé sur le paramètre passé dans l'URL
 app.delete("/", (req, res) => {
+
+    const id = parseInt(req.params.id)
+
+    	// trouve son index, verifier si le userIndex est positive
+	const userIndex = users.findIndex((user) => user.id === id)
+
+	// utilisateur non trouvé
+	if (userIndex < 0)
+		return res.status(404).json({ msg: "utilisateur non trouvé" })
+
+    // si el est trouvé
+	users.splice(userIndex, 1)
+
 	res.json({
-		msg: "Hello rest api ici le DELETE",
+		msg: "utilisateur suprimée",
 	})
 })
 
